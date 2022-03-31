@@ -71,13 +71,11 @@ def Content_filter(content_filter):
     test = cur.fetchall()
 
     randomlist = random.sample(test, 5)
+    #print(randomlist)
 
-    # print alle data
+    lst=[]
     for item in randomlist:
-        # print(item)
-        if item[0] == opgegeven_product_id:
-            continue
-        print('product_id:', item[0])
-
-
-Content_filter(content_filter)
+        lst.append(item[0])
+        #print('product_id:', item[0])
+    return lst
+print(Content_filter(content_filter))
