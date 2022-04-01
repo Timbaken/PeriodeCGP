@@ -2,7 +2,7 @@ import psycopg2
 import random
 
 try:
-    conn = psycopg2.connect("dbname=test user=postgres host=localhost password=")
+    conn = psycopg2.connect("dbname=test user=postgres host=localhost password=#Starwars04")
 except:
     print("I am unable to connect to the database")
 
@@ -11,13 +11,6 @@ cur = conn.cursor()
 
 # voer de product id in.
 opgegeven_product_id = '6919'
-
-# kies hier welke regel je wilt gebruiken
-content_filter = "select product_id,brand,gender from product where brand=%s and gender= %s and stock != 0 "
-
-
-# content_filter = "select * from product where selling_price BETWEEN %s AND %s AND category = %s AND stock > 0"
-
 
 def product_gegevens_ophalen():
     # teller
@@ -57,7 +50,7 @@ def product_gegevens_ophalen():
     return dictonary
 
 
-def Content_filter(content_filter):
+def Content_filter():
     # haalt de dict op uit de andere functie
     ophaler = product_gegevens_ophalen()
     category = (ophaler.get('category'))
@@ -78,4 +71,4 @@ def Content_filter(content_filter):
         lst.append(item[0])
         #print('product_id:', item[0])
     return lst
-print(Content_filter(content_filter))
+print(Content_filter())
