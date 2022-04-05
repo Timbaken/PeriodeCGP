@@ -7,8 +7,11 @@ from bson.objectid import ObjectId
 # The secret key used for session encryption is randomly generated every time
 # the server is started up. This means all session data (including the
 # shopping cart) is erased between server instances.
+from sprint_1.simpele_recomm import Content_filter, product_gegevens_ophalen
+
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
+
 
 class HUWebshop(object):
     """ This class combines all logic behind the HU Example Webshop project.
@@ -222,20 +225,26 @@ class HUWebshop(object):
 
     """ ..:: Recommendation Functions ::.. """
 
-    def recommendations(self, count):
+    def recommendations(self, productID, count):
         """ This function returns the recommendations from the provided page
         and context, by sending a request to the designated recommendation
         service. At the moment, it only transmits the profile ID and the number
         of expected recommendations; to have more user information in the REST
         request, this function would have to change."""
+
         resp = requests.get(self.recseraddress+"/"+session['profile_id']+"/"+str(count))
+
         if resp.status_code == 200:
-            recs = eval(resp.content.decode())
+            try:
+                recs = Content_filter(productID, count)
+            except IndexError:
+                recs = eval(resp.content.decode())
             queryfilter = {"_id": {"$in": recs}}
             querycursor = self.database.products.find(queryfilter, self.productfields)
             resultlist = list(map(self.prepproduct, list(querycursor)))
             return resultlist
         return []
+
 
     """ ..:: Full Page Endpoints ::.. """
 
@@ -260,13 +269,14 @@ class HUWebshop(object):
             pagepath = "/producten/"+("/".join(nononescats))+"/"
         else:
             pagepath = "/producten/"
+        productid = None
         return self.renderpackettemplate('products.html', {'products': prodlist, \
             'productcount': prodcount, \
             'pstart': skipindex + 1, \
             'pend': skipindex + session['items_per_page'] if session['items_per_page'] > 0 else prodcount, \
             'prevpage': pagepath+str(page-1) if (page > 1) else False, \
             'nextpage': pagepath+str(page+1) if (session['items_per_page']*page < prodcount) else False, \
-            'r_products':self.recommendations(4), \
+            'r_products':self.recommendations(productid, 4), \
             'r_type':list(self.recommendationtypes.keys())[0],\
             'r_string':list(self.recommendationtypes.values())[0]\
             })
@@ -277,7 +287,7 @@ class HUWebshop(object):
         product = self.database.products.find_one({"_id":str(productid)})
         return self.renderpackettemplate('productdetail.html', {'product':product,\
             'prepproduct':self.prepproduct(product),\
-            'r_products':self.recommendations(4), \
+            'r_products':self.recommendations(productid, 4), \
             'r_type':list(self.recommendationtypes.keys())[1],\
             'r_string':list(self.recommendationtypes.values())[1]})
 
@@ -288,8 +298,9 @@ class HUWebshop(object):
             product = self.prepproduct(self.database.products.find_one({"_id":str(tup[0])}))
             product["itemcount"] = tup[1]
             i.append(product)
+        productid = None
         return self.renderpackettemplate('shoppingcart.html',{'itemsincart':i,\
-            'r_products':self.recommendations(4), \
+            'r_products':self.recommendations(productid, 4), \
             'r_type':list(self.recommendationtypes.keys())[2],\
             'r_string':list(self.recommendationtypes.values())[2]})
 
@@ -333,5 +344,6 @@ class HUWebshop(object):
         return '{"success":true, "refurl":"'+request.form.get('refurl')+'"}'
 
     # TODO: add @app.errorhandler(404) and @app.errorhandler(405)
+
 
 huw = HUWebshop(app)

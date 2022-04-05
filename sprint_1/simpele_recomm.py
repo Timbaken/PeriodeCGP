@@ -2,17 +2,15 @@ import psycopg2
 import random
 
 try:
-    conn = psycopg2.connect("dbname=test user=postgres host=localhost password=#Starwars04")
+    conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=Kippen2")
 except:
     print("I am unable to connect to the database")
 
 # maak de cursor aan
 cur = conn.cursor()
 
-# voer de product id in.
-opgegeven_product_id = '6919'
 
-def product_gegevens_ophalen():
+def product_gegevens_ophalen(productID):
     # teller
     counter = 0
 
@@ -33,7 +31,7 @@ def product_gegevens_ophalen():
 
     # haalt alle informatie van een product op
     select_statement_input = 'select * from product where product_id= %s '
-    cur.execute(select_statement_input, (opgegeven_product_id,))
+    cur.execute(select_statement_input, (productID,))
 
     # de variable content_haler houdt alle info vast
     content_haler = cur.fetchall()
@@ -50,9 +48,9 @@ def product_gegevens_ophalen():
     return dictonary
 
 
-def Content_filter():
+def Content_filter(productID, count):
     # haalt de dict op uit de andere functie
-    ophaler = product_gegevens_ophalen()
+    ophaler = product_gegevens_ophalen(productID)
     category = (ophaler.get('category'))
     prijs = (ophaler.get('selling_price'))
 
@@ -63,12 +61,13 @@ def Content_filter():
     cur.execute(select_statement, (laagste_prijs, hoogste_prijs, category,))
     test = cur.fetchall()
 
-    randomlist = random.sample(test, 5)
+    randomlist = random.sample(test, count)
     #print(randomlist)
 
     lst=[]
     for item in randomlist:
         lst.append(item[0])
         #print('product_id:', item[0])
+    print(lst)
     return lst
-print(Content_filter())
+# print(Content_filter('23978'))
