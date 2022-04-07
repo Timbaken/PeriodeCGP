@@ -8,6 +8,7 @@ from bson.objectid import ObjectId
 # the server is started up. This means all session data (including the
 # shopping cart) is erased between server instances.
 from sprint_1.simpele_recomm import Content_filter, product_gegevens_ophalen
+from sprint_2.winkelmandje import winkelmandje
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
@@ -225,7 +226,7 @@ class HUWebshop(object):
 
     """ ..:: Recommendation Functions ::.. """
 
-    def recommendations(self, productID, count):
+    def recommendations(self, productID, count, pagina):
         """ This function returns the recommendations from the provided page
         and context, by sending a request to the designated recommendation
         service. At the moment, it only transmits the profile ID and the number
@@ -235,9 +236,9 @@ class HUWebshop(object):
         resp = requests.get(self.recseraddress+"/"+session['profile_id']+"/"+str(count))
 
         if resp.status_code == 200:
-            try:
-                recs = Content_filter(productID, count)
-            except IndexError:
+            if pagina == 'winkelmand':
+                recs = winkelmandje(productID)
+            else:
                 recs = eval(resp.content.decode())
             queryfilter = {"_id": {"$in": recs}}
             querycursor = self.database.products.find(queryfilter, self.productfields)
@@ -276,7 +277,7 @@ class HUWebshop(object):
             'pend': skipindex + session['items_per_page'] if session['items_per_page'] > 0 else prodcount, \
             'prevpage': pagepath+str(page-1) if (page > 1) else False, \
             'nextpage': pagepath+str(page+1) if (session['items_per_page']*page < prodcount) else False, \
-            'r_products':self.recommendations(productid, 4), \
+            'r_products':self.recommendations(productid, 4, 'categoriepagina'), \
             'r_type':list(self.recommendationtypes.keys())[0],\
             'r_string':list(self.recommendationtypes.values())[0]\
             })
@@ -287,7 +288,7 @@ class HUWebshop(object):
         product = self.database.products.find_one({"_id":str(productid)})
         return self.renderpackettemplate('productdetail.html', {'product':product,\
             'prepproduct':self.prepproduct(product),\
-            'r_products':self.recommendations(productid, 4), \
+            'r_products':self.recommendations(productid, 4, 'productpagina'), \
             'r_type':list(self.recommendationtypes.keys())[1],\
             'r_string':list(self.recommendationtypes.values())[1]})
 
@@ -298,9 +299,15 @@ class HUWebshop(object):
             product = self.prepproduct(self.database.products.find_one({"_id":str(tup[0])}))
             product["itemcount"] = tup[1]
             i.append(product)
-        productid = None
+        print(session['shopping_cart'])
+        print('-------------------')
+        productids = []
+        for item in session['shopping_cart']:
+            productids.append(item[0])
+        print(productids)
+        print('-------------------')
         return self.renderpackettemplate('shoppingcart.html',{'itemsincart':i,\
-            'r_products':self.recommendations(productid, 4), \
+            'r_products':self.recommendations(productids, 4, 'winkelmand'), \
             'r_type':list(self.recommendationtypes.keys())[2],\
             'r_string':list(self.recommendationtypes.values())[2]})
 
