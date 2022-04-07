@@ -9,40 +9,34 @@ except:
 # maak de cursor aan
 cur = conn.cursor()
 
-def product_gegevens_ophalen(productID):
-    # teller
-    counter = 0
+productID = ['23978','3071']
 
-    # lege lijst
-    lst2 = []
+def winkelmandje():
+    lst = []
+    eindlijst=[]
 
-    # haalt alle column namen op van de aangegeven tafel
-    cur.execute(
-        "SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name = 'product' ORDER BY ORDINAL_POSITION")
-    colomn_name = cur.fetchall()
 
-    # voegt alle items toe aan een lijst
-    for item in colomn_name:
-        lst2.append(item[0])
+    for item in productID:
+        select_statment="select orderd_products_id.sessions_id from orderd_products_id left join product on " \
+                        "orderd_products_id.orderd = product.product_id where orderd_products_id.orderd=%s"
+        cur.execute(select_statment,(item,))
+        test=cur.fetchall()
+        lst.append(test)
 
-    # maakt dict van de lijst met alle waardes als keys
-    dictonary = dict.fromkeys(lst2)
+    for index in range(len(lst)):
+        for item in lst[index]:
+            lst2 = []
+            product_select_statement="select orderd from orderd_products_id where sessions_id=%s"
+            cur.execute(product_select_statement,(item,))
+            p_test=cur.fetchall()
+            lst2.append(p_test)
 
-    # haalt alle informatie van een product op
-    select_statement_input = 'select * from product where product_id= %s '
-    cur.execute(select_statement_input, (productID,))
+            for ID in lst2[0]:
+                eindlijst.append(ID[0])
+    aanbevelingen=random.sample(eindlijst,5)
+    print(aanbevelingen)
 
-    # de variable content_haler houdt alle info vast
-    content_haler = cur.fetchall()
 
-    # pakt alle keys van de lijst
-    keys = list(dictonary.keys())
 
-    # print(content_haler)
-    # for loop om alle waardes aan de goede column te koppelen
-    for item in content_haler[0]:
-        dictonary[keys[counter]] = item
-        counter += 1
-    # print(dictonary)
-    return dictonary
 
+winkelmandje()
