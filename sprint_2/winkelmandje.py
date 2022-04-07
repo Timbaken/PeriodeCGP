@@ -40,6 +40,7 @@ def winkelmandje(productID):
             for ID in lst2[0]:
                 eindlijst.append(ID[0])
     aanbevelingen=random.sample(eindlijst,5)
-    print(aanbevelingen)
+    # print(aanbevelingen)
+    return aanbevelingen
 
-winkelmandje(['23978','3071'])
+# winkelmandje(['23978','3071'])
