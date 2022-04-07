@@ -9,19 +9,25 @@ except:
 # maak de cursor aan
 cur = conn.cursor()
 
-productID = ['23978','3071']
+def winkelmandje(productID):
 
-def winkelmandje():
+    #lege lijst
     lst = []
+
+    #lege eindlijst
     eindlijst=[]
 
 
     for item in productID:
+        #de sql query om te kijken wie nog meer dit product ooit heeft gekocht
         select_statment="select orderd_products_id.sessions_id from orderd_products_id left join product on " \
                         "orderd_products_id.orderd = product.product_id where orderd_products_id.orderd=%s"
+
+        #voert de sql query uit
         cur.execute(select_statment,(item,))
-        test=cur.fetchall()
-        lst.append(test)
+
+        ophaler=cur.fetchall()
+        lst.append(ophaler)
 
     for index in range(len(lst)):
         for item in lst[index]:
@@ -36,7 +42,4 @@ def winkelmandje():
     aanbevelingen=random.sample(eindlijst,5)
     print(aanbevelingen)
 
-
-
-
-winkelmandje()
+winkelmandje(['23978','3071'])
