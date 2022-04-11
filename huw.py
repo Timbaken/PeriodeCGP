@@ -7,7 +7,6 @@ from bson.objectid import ObjectId
 # The secret key used for session encryption is randomly generated every time
 # the server is started up. This means all session data (including the
 # shopping cart) is erased between server instances.
-from sprint_1.simpele_recomm import Content_filter, product_gegevens_ophalen
 from sprint_2.winkelmandje import winkelmandje
 
 app = Flask(__name__)
@@ -238,6 +237,8 @@ class HUWebshop(object):
         if resp.status_code == 200:
             if pagina == 'winkelmand':
                 recs = winkelmandje(productID)
+            elif pagina == 'categoriepagina':
+                recs = categoriepagina(productID)
             else:
                 recs = eval(resp.content.decode())
             queryfilter = {"_id": {"$in": recs}}
@@ -270,14 +271,13 @@ class HUWebshop(object):
             pagepath = "/producten/"+("/".join(nononescats))+"/"
         else:
             pagepath = "/producten/"
-        productid = None
         return self.renderpackettemplate('products.html', {'products': prodlist, \
             'productcount': prodcount, \
             'pstart': skipindex + 1, \
             'pend': skipindex + session['items_per_page'] if session['items_per_page'] > 0 else prodcount, \
             'prevpage': pagepath+str(page-1) if (page > 1) else False, \
             'nextpage': pagepath+str(page+1) if (session['items_per_page']*page < prodcount) else False, \
-            'r_products':self.recommendations(productid, 4, 'categoriepagina'), \
+            'r_products':self.recommendations(nononescats[0], 4, 'categoriepagina'), \
             'r_type':list(self.recommendationtypes.keys())[0],\
             'r_string':list(self.recommendationtypes.values())[0]\
             })
@@ -299,13 +299,9 @@ class HUWebshop(object):
             product = self.prepproduct(self.database.products.find_one({"_id":str(tup[0])}))
             product["itemcount"] = tup[1]
             i.append(product)
-        print(session['shopping_cart'])
-        print('-------------------')
         productids = []
         for item in session['shopping_cart']:
             productids.append(item[0])
-        print(productids)
-        print('-------------------')
         return self.renderpackettemplate('shoppingcart.html',{'itemsincart':i,\
             'r_products':self.recommendations(productids, 4, 'winkelmand'), \
             'r_type':list(self.recommendationtypes.keys())[2],\

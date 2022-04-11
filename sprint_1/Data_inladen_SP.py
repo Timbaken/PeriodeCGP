@@ -4,9 +4,9 @@ import time
 
 #probeer de connectie te maken met de sql database
 try:
-    conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=")
+    conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=Kippen2")
 except:
-    print( "I am unable to connect to the database")
+    print("I am unable to connect to the database")
 
 #maak de cursor aan
 cur = conn.cursor()
@@ -23,16 +23,16 @@ profiles = mydb["visitors"]
 #Sla de informatie van de mongo database op in lijsten
 print('loading')
 start = time.time()
-productdata = [x for x in product.find()]
-sessiondata = []
-i = 0
-for x in session.find():
-    if i == 1000:
-        break
-    if i % 1000 == 0:
-        print(i)
-    i += 1
-    sessiondata.append(x)
+# productdata = [x for x in product.find()]
+# sessiondata = []
+# i = 0
+# for x in session.find():
+#     if i == 1000000:
+#         break
+#     if i % 50000 == 0:
+#         print(i)
+#     i += 1
+#     sessiondata.append(x)
 profilesdata = [x for x in profiles.find()]
 print('loaded in')
 end = time.time()
@@ -463,28 +463,28 @@ def datainsertersessions():
 
 
 # Activeer de functies voor het droppen en maken van de tables
-tabledropper()
-tablemaker()
+# tabledropper()
+# tablemaker()
 
 # Activeert de functies voor het inserten van de tables
-datainserterproduct()
+# datainserterproduct()
 teller = 0
-start = time.time()
+# start = time.time()
 for i in range(len(profilesdata)):
     teller += 1
-    if teller % 1000 == 0:
+    if teller % 50000 == 0:
         print(teller)
-    datainserterprofiels()
-    datainserterBuids()
+    # datainserterprofiels()
+    # datainserterBuids()
     datainserterviewedbefore()
     datainserterprevious()
-teller = 0
-for i in range(len(sessiondata)):
-    teller += 1
-    if teller % 1000 == 0:
-        print(teller)
-    datainsertersessions()
-    datainserter_orderd_products_id()
-    datainserterpreferences()
+# teller = 0
+# for i in range(len(sessiondata)):
+#     teller += 1
+#     if teller % 50000 == 0:
+#         print(teller)
+#     # datainsertersessions()
+#     # datainserter_orderd_products_id()
+#     datainserterpreferences()
 end = time.time()
 print(end - start)
