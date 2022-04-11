@@ -4,10 +4,12 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 
+
 # The secret key used for session encryption is randomly generated every time
 # the server is started up. This means all session data (including the
 # shopping cart) is erased between server instances.
 from sprint_2.winkelmandje import winkelmandje
+from sprint_3.Categoriepagina import categorypagina
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
@@ -238,7 +240,7 @@ class HUWebshop(object):
             if pagina == 'winkelmand':
                 recs = winkelmandje(productID)
             elif pagina == 'categoriepagina':
-                recs = categoriepagina(productID)
+                recs = categorypagina(productID)
             else:
                 recs = eval(resp.content.decode())
             queryfilter = {"_id": {"$in": recs}}
