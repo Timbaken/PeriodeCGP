@@ -1,5 +1,4 @@
 import psycopg2
-import random
 
 try:
     conn = psycopg2.connect("dbname=test user=postgres host=localhost password=#Starwars04")
@@ -35,5 +34,3 @@ def categorypagina(category):
         for i in ophaler:
             lst1.append(i[0])
         return lst1
-
-print(categorypagina('Huishouden'))
