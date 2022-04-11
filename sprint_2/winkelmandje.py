@@ -11,7 +11,7 @@ cur = conn.cursor()
 
 def winkelmandje(productID):
 
-    #print(productID)
+    print(productID)
     #lege lijst
     lst = []
 
@@ -50,11 +50,18 @@ def winkelmandje(productID):
                 #voegt alles toe aan een eindlijst
                 eindlijst.append(ID[0])
 
-    #pakt 5 aanbevelingen uit de lijst
+    #haalt hetzelfde item uit de lijst.
+    for item in productID:
+        for id in eindlijst:
+            if id == item:
+                eindlijst.remove(item)
+
+    # pakt 5 aanbevelingen uit de lijst
     aanbevelingen=random.sample(eindlijst,5)
-    #print(aanbevelingen)
+
+    print(aanbevelingen)
     #returend de aanbevelingen.
     return aanbevelingen
 
 #is voor test zonder hem toe te voegen aan de front-end
-#winkelmandje(['45108'])
+winkelmandje(['23978','23309'])
