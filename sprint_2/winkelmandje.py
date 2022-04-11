@@ -2,7 +2,7 @@ import psycopg2
 import random
 
 try:
-    conn = psycopg2.connect("dbname=test user=postgres host=localhost password=#Starwars04")
+    conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=Kippen2")
 except:
     print("I am unable to connect to the database")
 
@@ -11,7 +11,6 @@ cur = conn.cursor()
 
 def winkelmandje(productID):
 
-    print(productID)
     #lege lijst
     lst = []
 
@@ -67,4 +66,4 @@ def winkelmandje(productID):
     return aanbevelingen
 
 #is voor test zonder hem toe te voegen aan de front-end
-winkelmandje(['23978','23309'])
+# winkelmandje(['23978','23309'])
