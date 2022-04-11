@@ -50,6 +50,9 @@ def winkelmandje(productID):
                 #voegt alles toe aan een eindlijst
                 eindlijst.append(ID[0])
 
+    #haalt alle dups eruit
+    eindlijst=list(dict.fromkeys(eindlijst))
+
     #haalt hetzelfde item uit de lijst.
     for item in productID:
         for id in eindlijst:
