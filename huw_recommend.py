@@ -3,7 +3,6 @@ from flask_restful import Api, Resource, reqparse
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from sprint_1 import simpele_recomm
 
 app = Flask(__name__)
 api = Api(app)
