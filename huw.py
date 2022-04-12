@@ -10,6 +10,7 @@ from bson.objectid import ObjectId
 # shopping cart) is erased between server instances.
 from sprint_2.winkelmandje import winkelmandje
 from sprint_3.Categoriepagina import categorypagina
+from sprint_3.productpagina import fuzzylogic
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
@@ -18,6 +19,8 @@ app.secret_key = os.urandom(16)
 class HUWebshop(object):
     """ This class combines all logic behind the HU Example Webshop project.
     Note that all rendering is performed within the templates themselves."""
+
+    numberOfRecommendations = 8
 
     app = None
     client = None
@@ -234,20 +237,16 @@ class HUWebshop(object):
         of expected recommendations; to have more user information in the REST
         request, this function would have to change."""
 
-        resp = requests.get(self.recseraddress+"/"+session['profile_id']+"/"+str(count))
-
-        if resp.status_code == 200:
-            if pagina == 'winkelmand':
-                recs = winkelmandje(productID)
-            elif pagina == 'categoriepagina':
-                recs = categorypagina(productID)
-            else:
-                recs = eval(resp.content.decode())
-            queryfilter = {"_id": {"$in": recs}}
-            querycursor = self.database.products.find(queryfilter, self.productfields)
-            resultlist = list(map(self.prepproduct, list(querycursor)))
-            return resultlist
-        return []
+        if pagina == 'winkelmand':
+            recs = winkelmandje(productID, count)
+        elif pagina == 'categoriepagina':
+            recs = categorypagina(productID, count)
+        elif pagina == 'productpagina':
+            recs = fuzzylogic(productID, count)
+        queryfilter = {"_id": {"$in": recs}}
+        querycursor = self.database.products.find(queryfilter, self.productfields)
+        resultlist = list(map(self.prepproduct, list(querycursor)))
+        return resultlist
 
 
     """ ..:: Full Page Endpoints ::.. """
@@ -279,7 +278,7 @@ class HUWebshop(object):
             'pend': skipindex + session['items_per_page'] if session['items_per_page'] > 0 else prodcount, \
             'prevpage': pagepath+str(page-1) if (page > 1) else False, \
             'nextpage': pagepath+str(page+1) if (session['items_per_page']*page < prodcount) else False, \
-            'r_products':self.recommendations(nononescats[0], 4, 'categoriepagina'), \
+            'r_products':self.recommendations(nononescats[0], self.numberOfRecommendations, 'categoriepagina'), \
             'r_type':list(self.recommendationtypes.keys())[0],\
             'r_string':list(self.recommendationtypes.values())[0]\
             })
@@ -290,7 +289,7 @@ class HUWebshop(object):
         product = self.database.products.find_one({"_id":str(productid)})
         return self.renderpackettemplate('productdetail.html', {'product':product,\
             'prepproduct':self.prepproduct(product),\
-            'r_products':self.recommendations(productid, 4, 'productpagina'), \
+            'r_products':self.recommendations(productid, self.numberOfRecommendations, 'productpagina'), \
             'r_type':list(self.recommendationtypes.keys())[1],\
             'r_string':list(self.recommendationtypes.values())[1]})
 
@@ -305,7 +304,7 @@ class HUWebshop(object):
         for item in session['shopping_cart']:
             productids.append(item[0])
         return self.renderpackettemplate('shoppingcart.html',{'itemsincart':i,\
-            'r_products':self.recommendations(productids, 4, 'winkelmand'), \
+            'r_products':self.recommendations(productids, self.numberOfRecommendations, 'winkelmand'), \
             'r_type':list(self.recommendationtypes.keys())[2],\
             'r_string':list(self.recommendationtypes.values())[2]})
 
