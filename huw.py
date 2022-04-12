@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 # the server is started up. This means all session data (including the
 # shopping cart) is erased between server instances.
 from sprint_2.winkelmandje import winkelmandje
-from sprint_3.Categoriepagina import categorypagina
+from sprint_3.categoriepagina import categorypagina
 from sprint_3.productpagina import fuzzylogic
 
 app = Flask(__name__)
