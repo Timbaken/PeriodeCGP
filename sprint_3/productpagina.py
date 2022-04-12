@@ -51,7 +51,7 @@ def productDictionary(prodId):
     return productDict
 
 
-def fuzzylogic(productID):
+def fuzzylogic(productID, count):
 
     productInfo = productDictionary(productID)
 
@@ -72,7 +72,7 @@ def fuzzylogic(productID):
                 similars[x[0]] += element[1]
 
     for element in similars:
-        cur.execute("select selling_price from product where product_id = '{}'".format(element))
+        cur.execute("select selling_price from product where product_id = %s", (element,))
         priceFetcher = cur.fetchone()
         difference = (priceFetcher[0] - productInfo['selling_price']) / productInfo['selling_price'] * 100
         difference = abs(difference)
@@ -86,10 +86,9 @@ def fuzzylogic(productID):
             similars[element] += 5
 
     similars.pop(productID)
-    # https://docs.python.org/3/library/heapq.html
-    print(heapq.nlargest(5, similars, key=similars.get))
+
     x = []
-    while len(x) != 5:
+    while len(x) != count:
         biggestValue = max(similars.values())
         y = [k for k,v in similars.items() if v == biggestValue]
         x.append(random.choice(y))

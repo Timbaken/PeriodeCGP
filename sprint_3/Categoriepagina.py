@@ -1,7 +1,7 @@
 import psycopg2
 
 try:
-    conn = psycopg2.connect("dbname=test user=postgres host=localhost password=#Starwars04")
+    conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=Kippen2")
 except:
     print("I am unable to connect to the database")
 
@@ -15,14 +15,16 @@ category_pagina = {'gezond-en-verzorging': 'Gezond & verzorging', 'huishouden': 
                    '50-procent-korting': '50% korting', 'nieuw': 'Nieuw', 'extra-deals': 'Extra Deals','folder-artikelen': 'Folder artikelen'}
 
 
-def categorypagina(category):
+def categorypagina(category, count):
         lst1 = []
 
         #zorgt ervoor dat de informatie overeen komt met wat in sql staat
         category=category_pagina.get(category)
 
         #sql statement
-        select_statment="select orderd_products_id.orderd,count(*) as total from orderd_products_id left join product on orderd_products_id.orderd = product.product_id where product.category=%s group by orderd order by total desc limit 5"
+        select_statment="select orderd_products_id.orderd,count(*) as total " \
+                        "from orderd_products_id left join product on orderd_products_id.orderd = product.product_id " \
+                        "where product.category=%s group by orderd order by total desc limit '{}'".format(count)
 
         #voert de sql query uit
         cur.execute(select_statment,(category,))

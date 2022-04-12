@@ -1,5 +1,6 @@
 import psycopg2
 import random
+from sprint_3.productpagina import fuzzylogic
 
 try:
     conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=Kippen2")
@@ -9,7 +10,7 @@ except:
 # maak de cursor aan
 cur = conn.cursor()
 
-def winkelmandje(productID):
+def winkelmandje(productID, count):
 
     #lege lijst
     lst = []
@@ -58,12 +59,16 @@ def winkelmandje(productID):
             if id == item:
                 eindlijst.remove(item)
 
-    # pakt 5 aanbevelingen uit de lijst
-    aanbevelingen=random.sample(eindlijst,5)
+    if len(eindlijst) < count:
+        extraIds = fuzzylogic(random.choice(productID), count - len(eindlijst))
+        eindlijst += extraIds
+        aanbevelingen = random.sample(eindlijst, count)
+    else:
+        # pakt 5 aanbevelingen uit de lijst
+        aanbevelingen=random.sample(eindlijst, count)
 
-    print(aanbevelingen)
     #returend de aanbevelingen.
     return aanbevelingen
 
-#is voor test zonder hem toe te voegen aan de front-end
-# winkelmandje(['23978','23309'])
+# is voor test zonder hem toe te voegen aan de front-end
+# print(winkelmandje(['23978']))
