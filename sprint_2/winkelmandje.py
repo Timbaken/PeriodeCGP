@@ -3,7 +3,7 @@ import random
 from sprint_3.productpagina import fuzzylogic
 
 try:
-    conn = psycopg2.connect("dbname=Test user=postgres host=localhost password=Kippen2")
+    conn = psycopg2.connect("dbname= user=postgres host=localhost password=")
 except:
     print("I am unable to connect to the database")
 
