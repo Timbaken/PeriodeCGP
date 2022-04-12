@@ -25,7 +25,7 @@ Nu je dit hebt gedaan kun je deze commandos uitvoeren in de command prompt:
 Laat deze command prompt ook runnen tijdens uw gebruik
 
 Als het goed is zal er dit staan:
- - * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ - Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 
 Ga naar deze website toe om gebruik te maken van de website:
  - http://127.0.0.1:5000
