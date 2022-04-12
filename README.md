@@ -19,16 +19,16 @@ Belangrijke dingen om op orde te hebben voor gebruik:
    - huw.py > regel 23
  
 Nu je dit hebt gedaan kun je deze commandos uitvoeren in de command prompt:
-set FLASK_APP=huw_recommend.py
-python -m flask run --port 5001
+ - set FLASK_APP=huw_recommend.py
+ - python -m flask run --port 5001
 
 Laat deze command prompt ook runnen tijdens uw gebruik
 
 Als het goed is zal er dit staan:
-* Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ - * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 
 Ga naar deze website toe om gebruik te maken van de website:
-http://127.0.0.1:5000
+ - http://127.0.0.1:5000
 
 Als je wilt stoppen:
-klik CTRL+C in de command prompt
+ - klik CTRL+C in de command prompt
